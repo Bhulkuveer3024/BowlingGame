@@ -1,13 +1,5 @@
-"""
-Unit tests for the Bowling Game
-
-This module contains basic unit tests for the BowlingGame class.
-Students should expand these tests to cover all functionality and edge cases.
-"""
-
 import unittest
 from bowling_game import BowlingGame
-
 
 class TestBowlingGame(unittest.TestCase):
     def setUp(self):
@@ -25,11 +17,59 @@ class TestBowlingGame(unittest.TestCase):
         self.assertEqual(0, self.game.score())
 
     def test_all_ones(self):
-        """Test a game where one pin is knocked down on each roll."""
+        """Test a game where each roll knocks down 1 pin."""
         self.roll_many(20, 1)
-        # Expected score: 20 (1 pin × 20 rolls)
         self.assertEqual(20, self.game.score())
 
+    def test_one_spare(self):
+        """Test a game with one spare."""
+        self.game.roll(5)
+        self.game.roll(5)  # Spare
+        self.game.roll(3)
+        self.roll_many(17, 0)
+        self.assertEqual(16, self.game.score())
 
-if __name__ == "__main__":
+    def test_one_strike(self):
+        """Test a game with one strike."""
+        self.game.roll(10)  # Strike
+        self.game.roll(3)
+        self.game.roll(4)
+        self.roll_many(16, 0)
+        self.assertEqual(24, self.game.score())
+
+    def test_perfect_game(self):
+        """Test a perfect game (all strikes)."""
+        self.roll_many(10, 10)  # 10 strikes for the first 10 frames
+        self .game.roll(10)  # Bonus roll 1
+        self.game.roll(10)  # Bonus roll 2
+        self.assertEqual(300, self.game.score())
+
+    def test_spare_in_last_frame(self):
+        """Test a game with a spare in the last frame."""
+        self.roll_many(18, 0)
+        self.game.roll(5)
+        self.game.roll(5)  # Spare
+        self.game.roll(5)  # Bonus roll
+        self.assertEqual(15, self.game.score())
+
+    def test_strike_in_last_frame(self):
+        """Test a game with a strike in the last frame."""
+        self.roll_many(18, 0)
+        self.game.roll(10)  # Strike
+        self.game.roll(3)
+        self.game.roll(4)  # Bonus rolls
+        self.assertEqual(17, self.game.score())
+
+    def test_invalid_roll(self):
+        """Test that an invalid roll raises a ValueError."""
+        with self.assertRaises(ValueError):
+            self.game.roll(11)  # Invalid roll
+
+    def test_exceeding_pins_in_frame(self):
+        """Test that exceeding pins in a frame raises a ValueError."""
+        self.game.roll(5)
+        with self.assertRaises(ValueError):
+            self.game.roll(6)  # Invalid second roll in the frame
+
+if __name__ == '__main__':
     unittest.main()
