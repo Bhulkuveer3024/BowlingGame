@@ -58,11 +58,13 @@ class BowlingGame:
             if self.is_strike(next_frame):
                 if frame_index + 2 < len(self.frames):
                     return 10 + self.frames[frame_index + 2][0]
-                return 10
+                return 10  # Last frame strike bonus
             return sum(next_frame)
         return 0
+       
 
     def spare_bonus(self, frame_index):
         if frame_index + 1 < len(self.frames):
-            return self.frames[frame_index + 1][0]
+            return self.frames[frame_index + 1][0] 
         return 0
+        
