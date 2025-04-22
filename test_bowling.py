@@ -43,22 +43,37 @@ class TestBowlingGame(unittest.TestCase):
         self .game.roll(10)  # Bonus roll 1
         self.game.roll(10)  # Bonus roll 2
         self.assertEqual(300, self.game.score())
+        
+    def test_all_spares(self):
+        """Test a game where every frame is a spare."""
+        self.roll_many(21, 5)  # 10 frames of 5-5 spares + 1 bonus roll
+        self.assertEqual(150, self.game.score())  # Each spare gives 10 + 5 bonus
 
-    def test_spare_in_last_frame(self):
-        """Test a game with a spare in the last frame."""
-        self.roll_many(18, 0)
-        self.game.roll(5)
-        self.game.roll(5)  # Spare
-        self.game.roll(5)  # Bonus roll
-        self.assertEqual(15, self.game.score())
-
-    def test_strike_in_last_frame(self):
-        """Test a game with a strike in the last frame."""
-        self.roll_many(18, 0)
+    def test_mixed_game(self):
+        """Test a game with a mix of strikes, spares, and open frames."""
         self.game.roll(10)  # Strike
+        self.game.roll(5)
+        self.game.roll(4)  # Spare
+        self.game.roll(3)
+        self.game.roll(4)  # Open frame
+        self.roll_many(14, 0)  # Remaining rolls
+        self.assertEqual(43, self.game.score())  # Calculate the score based on the rolls
+
+    def test_tenth_frame_spare(self):
+        """Test a game with a spare in the last frame."""
+        self.roll_many(18, 0)  # 18 rolls of 0
+        self.game.roll(5)
+        self.game.roll(5)  # Spare in the last frame
+        self.game.roll(3)  # Bonus roll
+        self.assertEqual(13, self.game.score())  # 5 + 5 + 3 = 13
+
+    def test_tenth_frame_strike(self):
+        """Test a game with a strike in the last frame."""
+        self.roll_many(18, 0)  # 18 rolls of 0
+        self.game.roll(10)  # Strike in the last frame
         self.game.roll(3)
         self.game.roll(4)  # Bonus rolls
-        self.assertEqual(17, self.game.score())
+        self.assertEqual(24, self.game.score())  # 10 + (3 + 4) + 3 + 4 = 24
 
     def test_invalid_roll(self):
         """Test that an invalid roll raises a ValueError."""
